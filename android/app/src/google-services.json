@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "290758825986",
+    "project_id": "tensor-flow-824e3",
+    "storage_bucket": "tensor-flow-824e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290758825986:android:ffdb811c7c6b1c5795af1b",
+        "android_client_info": {
+          "package_name": "com.devcode.tensor_flow_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "290758825986-ldatjbm4fc10b45c8shmf36kg1l1f2lo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEFttYn6jAnsqGLMmFH_VPsXYDVDDMYes"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "290758825986-ldatjbm4fc10b45c8shmf36kg1l1f2lo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
