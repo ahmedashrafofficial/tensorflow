@@ -42,7 +42,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   XFile? _image;
   List? _outputs;
-  List<String>? labels;
   final ImagePicker _picker = ImagePicker();
   // final options = FaceDetectorOptions();
   // final faceDetector = FaceDetector(
@@ -154,10 +153,10 @@ class _MyHomePageState extends State<MyHomePage> {
               '${_outputs![0]["label"]} : ${(_outputs![0]["confidence"] * 100)}',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            Text(
-              '$_outputs',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            // Text(
+            //   '$_outputs',
+            //   style: Theme.of(context).textTheme.headlineMedium,
+            // ),
           }
         ],
       ),

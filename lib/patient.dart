@@ -7,7 +7,7 @@ import 'package:tensor_flow_app/xray.dart';
 class Patient extends Equatable {
   final String? id;
   final String? name;
-  final int? doctorId;
+  final String? doctorId;
   final List<Xray>? images;
   const Patient({
     this.id,
@@ -26,11 +26,10 @@ class Patient extends Equatable {
   }
 
   factory Patient.fromMap(Map<String, dynamic> map) {
-    // print(map['images']);
     return Patient(
       id: map['id'],
       name: map['name'],
-      doctorId: int.parse(map['doctorId']),
+      doctorId: map['doctorId'],
       images: imagesListString(map['images']),
     );
   }
@@ -41,12 +40,9 @@ class Patient extends Equatable {
       for (var e in list) {
         var xray = Xray.fromJson(e);
         newList.add(xray);
-        print(newList);
       }
-      print(newList);
 
       return newList;
-      //  list.map((e) => Xray.fromJson(e)).toList();
     } else {
       return List.empty();
     }
@@ -54,4 +50,20 @@ class Patient extends Equatable {
 
   @override
   List<Object?> get props => [id, doctorId, images];
+
+  Patient copyWith({
+    String? id,
+    String? name,
+    String? doctorId,
+    List<Xray>? images,
+  }) {
+    return Patient(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      doctorId: doctorId ?? this.doctorId,
+      images: this.images == null
+          ? images
+          : this.images!.followedBy(images!).toList(),
+    );
+  }
 }
