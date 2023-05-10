@@ -140,27 +140,19 @@ class _LoginPageState extends State<LoginPage> {
     var pass4 = sharedPreferences.getString("pass4");
     if (id == user1) {
       if (password == pass1) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, Routes.homeRoute, (route) => false,
-            arguments: id);
+        Navigator.pushNamed(context, Routes.homeRoute, arguments: id);
       }
     } else if (id == user2) {
       if (password == pass2) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, Routes.homeRoute, (route) => false,
-            arguments: id);
+        Navigator.pushNamed(context, Routes.homeRoute, arguments: id);
       }
     } else if (id == user3) {
       if (password == pass3) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, Routes.homeRoute, (route) => false,
-            arguments: id);
+        Navigator.pushNamed(context, Routes.homeRoute, arguments: id);
       }
     } else if (id == user4) {
       if (password == pass4) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, Routes.homeRoute, (route) => false,
-            arguments: id);
+        Navigator.pushNamed(context, Routes.homeRoute, arguments: id);
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:tensor_flow_app/SplashScreen.dart';
+import 'package:tensor_flow_app/details.dart';
 import 'package:tensor_flow_app/home.dart';
+import 'package:tensor_flow_app/patient.dart';
+import 'package:tensor_flow_app/upload.dart';
 
 class Routes {
   static const String initialRoute = '/';
   static const String nextPageRoute = '/nextPageRoute';
   static const String homeRoute = '/homeRoute';
+  static const String detailsRoute = '/detailsRoute';
+  static const String uploadRoute = '/uploadRoute';
 }
 
 class AppRoutes {
@@ -23,7 +28,14 @@ class AppRoutes {
         return MaterialPageRoute(builder: (context) {
           return HomeScreen(id: routeSettings.arguments as String);
         });
-
+      case Routes.detailsRoute:
+        return MaterialPageRoute(builder: (context) {
+          return DetailsScreen(patient: routeSettings.arguments as Patient);
+        });
+      case Routes.uploadRoute:
+        return MaterialPageRoute(builder: (context) {
+          return UploadScreen(patient: routeSettings.arguments as Patient);
+        });
       default:
         return undefinedRoute();
     }
