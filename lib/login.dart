@@ -32,11 +32,11 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text('Login'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -51,14 +51,14 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: getSize(context, 24))),
+                        fontSize: getSize(context, 22))),
                 const GapHeight(height: 10),
                 Text(
                     'Login to enjoy the features we’ve provided, and take control of your lung!',
                     style: TextStyle(
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,
-                        fontSize: getSize(context, 18))),
+                        fontSize: getSize(context, 16))),
                 const GapHeight(height: 30),
                 TextFormField(
                   controller: _idController,
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Container(
                     width: getSize(context, 200),
-                    height: getSize(context, 50),
+                    height: getSize(context, 40),
                     decoration: BoxDecoration(
                         color: backgroundColor,
                         borderRadius: BorderRadius.circular(50)),
@@ -117,6 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                const GapHeight(height: 10),
               ],
             ),
           ),

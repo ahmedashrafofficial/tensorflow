@@ -1,16 +1,18 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, use_build_context_synchronously
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tensor_flow_app/config/routes/app_routes.dart';
+import 'package:tensor_flow_app/xray.dart';
 import 'package:tflite/tflite.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:tensor_flow_app/SplashScreen.dart';
 import 'package:tensor_flow_app/config/device_size.dart';
 import 'package:tensor_flow_app/config/sizes.dart';
 import 'package:tensor_flow_app/patient.dart';
-import 'package:tensor_flow_app/xray.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({
@@ -26,6 +28,7 @@ class UploadScreen extends StatefulWidget {
 class _UploadScreenState extends State<UploadScreen> {
   XFile? _image;
   List? _outputs;
+  bool _isLoading = false;
   late final ImagePicker _picker = ImagePicker();
 
   void _getImage(ImageSource source) async {
@@ -57,13 +60,13 @@ class _UploadScreenState extends State<UploadScreen> {
 
   @override
   void initState() {
-    // _initTenserFlow();
+    _initTenserFlow();
     super.initState();
   }
 
   @override
   Future<void> dispose() async {
-    // await Tflite.close();
+    await Tflite.close();
     super.dispose();
   }
 
@@ -81,7 +84,7 @@ class _UploadScreenState extends State<UploadScreen> {
                   _getImage(ImageSource.gallery);
                 },
                 child: Container(
-                  width: getSize(context, 150),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   height: getSize(context, 50),
                   decoration: BoxDecoration(
                       color: backgroundColor,
@@ -89,7 +92,7 @@ class _UploadScreenState extends State<UploadScreen> {
                   child: Center(
                     child: Text('Upload From Gallery',
                         style: TextStyle(
-                            fontSize: getSize(context, 14),
+                            fontSize: getSize(context, 10),
                             color: Colors.white,
                             fontWeight: FontWeight.bold)),
                   ),
@@ -97,24 +100,10 @@ class _UploadScreenState extends State<UploadScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  // _getImage(ImageSource.camera);
-                  FirebaseFirestore.instance
-                      .collection("patients")
-                      .doc("gLeO7Z6BWp4qh3EhNH2b")
-                      .set(
-                          widget.patient.copyWith(images: [
-                            const Xray(
-                                url: "test",
-                                name: "covid19",
-                                confidence: 97,
-                                date: 1683695032232)
-                          ]).toJson(),
-                          SetOptions(
-                            merge: true,
-                          ));
+                  _getImage(ImageSource.camera);
                 },
                 child: Container(
-                  width: getSize(context, 150),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   height: getSize(context, 50),
                   decoration: BoxDecoration(
                       color: backgroundColor,
@@ -122,7 +111,7 @@ class _UploadScreenState extends State<UploadScreen> {
                   child: Center(
                     child: Text('Upload From Camera',
                         style: TextStyle(
-                            fontSize: getSize(context, 14),
+                            fontSize: getSize(context, 10),
                             color: Colors.white,
                             fontWeight: FontWeight.bold)),
                   ),
@@ -141,38 +130,83 @@ class _UploadScreenState extends State<UploadScreen> {
           },
           if (_outputs != null) ...{
             Text(
-              'Name : ${_outputs![0]["label"]})}',
+              'Name : ${_outputs![0]["label"]}',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Text(
-              'Confidence : ${double.parse(_outputs![0]["confidence"] * 100).toStringAsFixed(2)}',
+              'Confidence : ${(double.parse(_outputs![0]["confidence"].toString()) * 100).toStringAsFixed(2)}',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const GapHeight(height: 20),
-            GestureDetector(
-              onTap: () {
-                FirebaseFirestore.instance
-                    .collection("patients")
-                    .doc("gLeO7Z6BWp4qh3EhNH2b")
-                    .update(
-                        const Xray(url: "test", name: "covid", confidence: 94)
-                            .toJson());
-              },
-              child: Container(
-                width: getSize(context, 150),
-                height: getSize(context, 50),
-                decoration: BoxDecoration(
-                    color: backgroundColor,
-                    borderRadius: BorderRadius.circular(50)),
-                child: Center(
-                  child: Text('Upload To Cloud',
-                      style: TextStyle(
-                          fontSize: getSize(context, 14),
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold)),
+            if (!_isLoading) ...{
+              GestureDetector(
+                onTap: () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+
+                  UploadTask uploadTask;
+
+                  // Create a Reference to the file
+                  Reference ref = FirebaseStorage.instance
+                      .ref()
+                      .child('images')
+                      .child('/some-image.jpg');
+                  final metadata = SettableMetadata(
+                    contentType: 'image/jpeg',
+                    customMetadata: {'picked-file-path': _image!.path},
+                  );
+                  uploadTask = ref.putFile(File(_image!.path), metadata);
+                  await Future.value(uploadTask);
+                  final link = await ref.getDownloadURL();
+                  FirebaseFirestore.instance
+                      .collection("patients")
+                      .doc(widget.patient.id)
+                      .set(
+                          widget.patient.copyWith(images: [
+                            Xray(
+                                url: link,
+                                name: '${_outputs![0]["label"]}',
+                                confidence: double.parse((double.parse(
+                                            _outputs![0]["confidence"]
+                                                .toString()) *
+                                        100)
+                                    .toStringAsFixed(2)),
+                                date: DateTime.now().millisecondsSinceEpoch)
+                          ]).toJson(),
+                          SetOptions(
+                            merge: true,
+                          ));
+
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   const SnackBar(
+                  //     content: Text('Image uploaded successfully'),
+                  //   ),
+                  // );
+                  Navigator.pushNamedAndRemoveUntil(context, Routes.homeRoute,
+                      ModalRoute.withName(Routes.homeRoute),
+                      arguments: widget.patient.doctorId);
+                },
+                child: Container(
+                  width: getSize(context, 150),
+                  height: getSize(context, 50),
+                  decoration: BoxDecoration(
+                      color: backgroundColor,
+                      borderRadius: BorderRadius.circular(50)),
+                  child: Center(
+                    child: Text('Upload To Cloud',
+                        style: TextStyle(
+                            fontSize: getSize(context, 14),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold)),
+                  ),
                 ),
-              ),
-            ),
+              )
+            } else ...{
+              const CircularProgressIndicator(
+                color: backgroundColor,
+              )
+            },
           }
         ],
       ),

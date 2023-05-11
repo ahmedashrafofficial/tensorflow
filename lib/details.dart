@@ -29,31 +29,36 @@ class DetailsScreen extends StatelessWidget {
         ),
         body: ListView.separated(
             itemCount: patient.images!.length,
-            itemBuilder: (context, index) => Column(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: CachedNetworkImage(
-                        imageUrl: patient.images![index].url!,
-                        width: getSize(context, 300),
-                        height: getSize(context, 300),
-                        fit: BoxFit.cover,
+            itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: CachedNetworkImage(
+                          imageUrl: patient.images![index].url!,
+                          width: getSize(context, 300),
+                          height: getSize(context, 300),
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    Text("Confidence : ${patient.images![index].confidence}",
-                        style: TextStyle(
-                            color: backgroundColor,
-                            fontSize: getSize(context, 18))),
-                    Text(
-                        "Date : ${DateFormat("yyyy:MM:dd hh:mm:ss a").format(DateTime.fromMillisecondsSinceEpoch(patient.images![index].date!))}",
-                        style: TextStyle(
-                            color: backgroundColor,
-                            fontSize: getSize(context, 18))),
-                  ],
+                      Text("Confidence : ${patient.images![index].confidence}",
+                          style: TextStyle(
+                              color: backgroundColor,
+                              fontSize: getSize(context, 18))),
+                      Text(
+                          "Date : ${DateFormat("yyyy:MM:dd hh:mm:ss a").format(DateTime.fromMillisecondsSinceEpoch(patient.images![index].date!))}",
+                          style: TextStyle(
+                              color: backgroundColor,
+                              fontSize: getSize(context, 16))),
+                    ],
+                  ),
                 ),
             separatorBuilder: (context, index) => const Divider(
-                  thickness: 3,
-                  height: 10,
+                  thickness: 1,
+                  height: 50,
+                  indent: 10,
+                  endIndent: 10,
                   color: backgroundColor,
                 )));
   }
