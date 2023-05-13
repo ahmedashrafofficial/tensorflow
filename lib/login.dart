@@ -32,33 +32,36 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text('Login'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(
-                  "assets/images/logo-removebg-preview-1-1.png",
-                  fit: BoxFit.fill,
-                  color: backgroundColor,
-                  height: getSize(context, 200),
-                  width: getSize(context, 200),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    "assets/images/logo-removebg-preview-1-1.png",
+                    fit: BoxFit.fill,
+                    height: getSize(context, 150),
+                    width: getSize(context, 150),
+                  ),
                 ),
+                const GapHeight(height: 10),
                 Text('Let’s get started!',
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: getSize(context, 24))),
+                        fontSize: getSize(context, 22))),
                 const GapHeight(height: 10),
                 Text(
                     'Login to enjoy the features we’ve provided, and take control of your lung!',
                     style: TextStyle(
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,
-                        fontSize: getSize(context, 18))),
+                        fontSize: getSize(context, 16))),
                 const GapHeight(height: 30),
                 TextFormField(
                   controller: _idController,
@@ -105,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Container(
                     width: getSize(context, 200),
-                    height: getSize(context, 50),
+                    height: getSize(context, 40),
                     decoration: BoxDecoration(
                         color: backgroundColor,
                         borderRadius: BorderRadius.circular(50)),
@@ -117,6 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                const GapHeight(height: 10),
               ],
             ),
           ),

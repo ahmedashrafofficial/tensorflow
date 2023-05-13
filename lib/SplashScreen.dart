@@ -88,10 +88,11 @@ class NextPageScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            const GapHeight(height: 100),
             Image.asset(
               'assets/images/xm-1.png',
               fit: BoxFit.fill,
-              height: getSize(context, 500),
+              height: getSize(context, 380),
             ),
             const GapHeight(height: 10),
             Text(
@@ -138,8 +139,8 @@ class NextPageScreen extends StatelessWidget {
                     backgroundColor: backgroundColor,
                     child: Image.asset(
                       'assets/images/icon-arrow-right-Dq5.png',
-                      width: 24 * size,
-                      height: 24 * size,
+                      width: 20 * size,
+                      height: 20 * size,
                     ),
                   ),
                 ),
@@ -164,10 +165,11 @@ class Page3 extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            const GapHeight(height: 100),
             Image.asset(
               'assets/images/xm-22.png',
               fit: BoxFit.fill,
-              height: getSize(context, 500),
+              height: getSize(context, 350),
             ),
             const GapHeight(height: 10),
             Text(
@@ -214,8 +216,8 @@ class Page3 extends StatelessWidget {
                     backgroundColor: backgroundColor,
                     child: Image.asset(
                       'assets/images/icon-arrow-right-Dq5.png',
-                      width: 24 * size,
-                      height: 24 * size,
+                      width: 20 * size,
+                      height: 20 * size,
                     ),
                   ),
                 ),
