@@ -40,13 +40,16 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(
-                  "assets/images/logo-removebg-preview-1-1.png",
-                  fit: BoxFit.fill,
-                  color: backgroundColor,
-                  height: getSize(context, 200),
-                  width: getSize(context, 200),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    "assets/images/logo-removebg-preview-1-1.png",
+                    fit: BoxFit.fill,
+                    height: getSize(context, 150),
+                    width: getSize(context, 150),
+                  ),
                 ),
+                const GapHeight(height: 10),
                 Text('Let’s get started!',
                     style: TextStyle(
                         color: Colors.black,

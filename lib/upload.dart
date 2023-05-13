@@ -2,11 +2,14 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tensor_flow_app/config/api/api_consumer.dart';
+import 'package:tensor_flow_app/config/api/api_consumer_impl.dart';
+import 'package:tensor_flow_app/config/api/end_points.dart';
 import 'package:tensor_flow_app/config/routes/app_routes.dart';
 import 'package:tensor_flow_app/xray.dart';
-import 'package:tflite/tflite.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:tensor_flow_app/SplashScreen.dart';
@@ -27,14 +30,16 @@ class UploadScreen extends StatefulWidget {
 
 class _UploadScreenState extends State<UploadScreen> {
   XFile? _image;
-  List? _outputs;
+  Map<String, dynamic>? _outputs;
   bool _isLoading = false;
+  bool _isLoading2 = false;
   late final ImagePicker _picker = ImagePicker();
 
   void _getImage(ImageSource source) async {
     var image = await _picker.pickImage(source: source);
     if (image != null) {
       setState(() {
+        _isLoading2 = true;
         _image = image;
       });
       classifyImage(image);
@@ -42,31 +47,48 @@ class _UploadScreenState extends State<UploadScreen> {
   }
 
   void classifyImage(XFile image) async {
-    var output = await Tflite.runModelOnImage(
-      path: image.path,
-    );
+    ApiConsumer dio = ApiConsumerImpl(client: Dio());
+    String fileName = image.path.split('/').last;
 
+    FormData formData = FormData.fromMap({
+      "image": await MultipartFile.fromFile(image.path, filename: fileName),
+    });
+    var response = await dio.post(EndPoints.baseUrl, body: formData);
+    _outputs = {
+      'probability': response['probability'],
+      'state': response['state']
+    };
     setState(() {
-      _outputs = output;
+      _isLoading2 = false;
     });
   }
 
-  Future<void> _initTenserFlow() async {
-    await Tflite.loadModel(
-      model: "assets/model.tflite",
-      labels: "assets/labels.txt",
-    );
-  }
+  // void classifyImage(XFile image) async {
+  //   var output = await Tflite.runModelOnImage(
+  //     path: image.path,
+  //   );
+
+  //   setState(() {
+  //     _outputs = output;
+  //   });
+  // }
+
+  // Future<void> _initTenserFlow() async {
+  //   await Tflite.loadModel(
+  //     model: "assets/model.tflite",
+  //     labels: "assets/labels.txt",
+  //   );
+  // }
 
   @override
   void initState() {
-    _initTenserFlow();
+    // _initTenserFlow();
     super.initState();
   }
 
   @override
   Future<void> dispose() async {
-    await Tflite.close();
+    // await Tflite.close();
     super.dispose();
   }
 
@@ -128,15 +150,24 @@ class _UploadScreenState extends State<UploadScreen> {
               height: getSize(context, 300),
             ),
           },
+          if (!_isLoading2) ...{
+            if (_outputs != null) ...{
+              Text(
+                'Prediction : ${_outputs!["state"]}',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              Text(
+                'Probability : ${(double.parse(_outputs!["probability"].toString()) * 100).toStringAsFixed(2)}',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            }
+          } else ...{
+            const GapHeight(height: 20),
+            const CircularProgressIndicator(
+              color: backgroundColor,
+            ),
+          },
           if (_outputs != null) ...{
-            Text(
-              'Name : ${_outputs![0]["label"]}',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Text(
-              'Confidence : ${(double.parse(_outputs![0]["confidence"].toString()) * 100).toStringAsFixed(2)}',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
             const GapHeight(height: 20),
             if (!_isLoading) ...{
               GestureDetector(
@@ -166,9 +197,9 @@ class _UploadScreenState extends State<UploadScreen> {
                           widget.patient.copyWith(images: [
                             Xray(
                                 url: link,
-                                name: '${_outputs![0]["label"]}',
+                                name: '${_outputs!["state"]}',
                                 confidence: double.parse((double.parse(
-                                            _outputs![0]["confidence"]
+                                            _outputs!["probability"]
                                                 .toString()) *
                                         100)
                                     .toStringAsFixed(2)),
@@ -178,11 +209,6 @@ class _UploadScreenState extends State<UploadScreen> {
                             merge: true,
                           ));
 
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   const SnackBar(
-                  //     content: Text('Image uploaded successfully'),
-                  //   ),
-                  // );
                   Navigator.pushNamedAndRemoveUntil(context, Routes.homeRoute,
                       ModalRoute.withName(Routes.homeRoute),
                       arguments: widget.patient.doctorId);

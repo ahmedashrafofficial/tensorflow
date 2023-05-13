@@ -175,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Padding(
                               padding: const EdgeInsets.only(left: 16.0),
                               child: Text(
-                                "The Power of Palumovision and how it works!",
+                                "The Power of Pulmovision and how it works!",
                                 style: TextStyle(
                                   color: const Color(0xff101623),
                                   fontSize: getSize(context, 16),

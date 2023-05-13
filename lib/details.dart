@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:tensor_flow_app/SplashScreen.dart';
 import 'package:tensor_flow_app/config/device_size.dart';
 import 'package:tensor_flow_app/config/routes/app_routes.dart';
+import 'package:tensor_flow_app/config/sizes.dart';
 
 import 'package:tensor_flow_app/patient.dart';
 
@@ -42,10 +43,16 @@ class DetailsScreen extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                       ),
-                      Text("Confidence : ${patient.images![index].confidence}",
+                      Text("Prediction : ${patient.images![index].name}",
                           style: TextStyle(
                               color: backgroundColor,
                               fontSize: getSize(context, 18))),
+                      const GapHeight(height: 8),
+                      Text("Probability : ${patient.images![index].confidence}",
+                          style: TextStyle(
+                              color: backgroundColor,
+                              fontSize: getSize(context, 17))),
+                      const GapHeight(height: 8),
                       Text(
                           "Date : ${DateFormat("yyyy:MM:dd hh:mm:ss a").format(DateTime.fromMillisecondsSinceEpoch(patient.images![index].date!))}",
                           style: TextStyle(
